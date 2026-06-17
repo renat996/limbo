@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limbo</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:;">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://googleapis.com" rel="stylesheet">
+    
+    <link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+</head>
+<body>
+<div class="flashlight-overlay"></div>
+
+<header class="header">
+  <h1>Limbo</h1>
+  <nav>
+    <a class="menu-link" href="index.html">About</a>
+    <a class="menu-link" href="characters.html">Characters</a>
+    <!-- Ссылка ведет на id="gameplay" внизу страницы -->
+    <a class="menu-link" href="#gameplay" id="gameplay-scroll-btn">Gameplay</a>
+    <a href="#" id="trailer-link" class="open-trailer-btn">▶ Watch Trailer</a>
+  </nav>
+</header>
+
+<main>
+  <div class="section" id="about">
+    <p class="game-info">Playdead · 2010</p>
+    <h1 class="h1">Neglect not the dreams of the boy</h1>
+    <div class="hero">
+      <div class="hero-text">  
+        <p>He woke up alone. In a forest devoid of light.</p>
+        <p>Ahead lies only fear and the hope of finding his sister.</p>
+        <!-- Кнопка ведет к финальному блоку в самом низу -->
+        <a href="#page-bottom" id="trailer" class="open-trailer-btn">Explore Universe</a>
+      </div>
+    </div>
+  </div> 
+
+  <div class="separator-line"></div>
+
+  <div class="content-img">
+    <div class="text">
+      <p class="about-title">About the game</p>
+      <p class="content-text">A journey through gloom,<br> where every step could be your last</p>
+      <p>No words. No explanations. Only darkness, silence, and the sound of your own footsteps. The world of Limbo does not forgive mistakes — it punishes them beautifully.</p>
+      <p>A boy with no name. A sister who may no longer exist. A path that leads deeper into shadow with every step.</p>
+      <p class="tags">PUZZLE · PLATFORMER · ATMOSPHERIC</p>
+    </div>
+
+    <div class="media-side">
+      <div class="image-placeholder">
+        <img src="./img/limbo1.jpg" alt="Мальчик в мрачном лесу Limbo" class="game-img">
+      </div>
+    </div>
+  </div>
+
+  <div class="slider-section">
+    <div class="slider-block">
+      <div class="slide-text">
+        <div class="slide-tag" id="s-tag">Location 01 — The Wood</div>
+        <div class="slide-title" id="s-title">The forest holds no mercy</div>
+        <div class="slide-desc" id="s-desc">A gloomy forest where every tree conceals a threat. The boy’s first steps are taken in absolute darkness, with no clues and no explanations.</div>
+      </div>
+      <div class="slide-img-wrap">
+        <img src="./img/limbo2.jpg" alt="Лес" class="slide-img" id="s-img">
+      </div>
+    </div>
+    <div class="slider-controls">
+      <button class="arr" id="prev"></button>
+      <div class="dots">
+        <div class="dot active" data-i="0"></div>
+        <div class="dot" data-i="1"></div>
+        <div class="dot" data-i="2"></div>
+        <div class="dot" data-i="3"></div>
+      </div>
+      <button class="arr" id="next"></button>
+      <div class="slide-num" id="s-num">01 / 04</div>
+    </div>
+  </div>
+
+  <div class="final-section"></div>
+  <div class="final">
+    <p>"The world of Limbo does not forgive mistakes — it punishes them beautifully."</p>
+    <p>— LIMBO, 2010</p>
+  </div>
+
+  <div class="gallery-section">
+    <div class="gallery-label">Screenshots</div>
+    <div class="gallery-grid">
+      <img src="./img/123.jpg" alt="Screenshot 1" class="gallery-img">
+      <img src="./img/2.jpg" alt="Screenshot 2" class="gallery-img">
+      <img src="./img/3.jpg" alt="Screenshot 3" class="gallery-img">
+    </div>
+  </div>
+
+  <div class="section" id="characters" style="display:none">
+    The boy is an nameless hero...
+  </div>
+  
+  <div class="section" id="trailer-section" style="display:none">
+    A world without color...
+  </div>
+<div class="separator-line"></div>
+
+<div class="system-requirements">
+  <p class="about-title">System Specs</p>
+  <div class="specs-grid">
+    <div>
+      <h5>Minimum</h5>
+      <p><strong>OS:</strong> Windows XP, Vista, 7</p>
+      <p><strong>Processor:</strong> 2.0 GHz</p>
+      <p><strong>Memory:</strong> 512 MB RAM</p>
+      <p><strong>Storage:</strong> 150 MB available space</p>
+    </div>
+    <div>
+      <h5>Recommended</h5>
+      <p><strong>OS:</strong> Windows 10 / 11</p>
+      <p><strong>Processor:</strong> Dual Core</p>
+      <p><strong>Memory:</strong> 1 GB RAM</p>
+      <p><strong>Graphics:</strong> OpenGL 2.0 compatible</p>
+    </div>
+  </div>
+</div>
+<div id="registerModal" class="reg-modal">
+  <div class="reg-modal-content">
+    <span class="reg-close-btn" id="closeRegModalBtn">&times;</span>
+    <h2>Join the Shadows</h2>
+    <p class="reg-subtitle">Create your account to save your progress</p>
+    
+    <form id="regForm">
+      <div class="form-group">
+        <label for="regPhone">Phone Number</label>
+        <input type="text" id="regPhone" placeholder="Only digits allowed" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="regEmail">Email Address</label>
+        <input type="email" id="regEmail" placeholder="example@domain.com" required>
+      </div>
+      
+      <button type="submit" class="open-trailer-btn" style="width: 100%; margin-top: 10px; border: 1px solid #555; background: transparent; color: #fff; padding: 12px; cursor: pointer;">Register</button>
+    </form>
+  </div>
+</div>
+
+</main>
+
+<script src="java.js"></script>
+</body>
+</html>

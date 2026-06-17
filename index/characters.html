@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limbo — Characters</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:;">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://googleapis.com" rel="stylesheet">
+    <link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+</head>
+<body>
+<div class="flashlight-overlay"></div>
+
+<header class="header">
+  <h1>Limbo</h1>
+  <nav>
+    <a class="menu-link" href="index.html">About</a>
+    <a class="menu-link active" href="characters.html" style="color: #fff;">Characters</a>
+    <a class="menu-link" href="gameplay.html">Gameplay</a>
+    <a class="menu-link" href="trailer.html">Trailer</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero" style="margin-bottom: 20px;">
+    <p class="game-info" style="margin-left: 0; text-align: center; width: 100%;">THE LOST · THE HUNTERS · THE MONSTERS</p>
+    <h1 class="h1" style="text-align: center; margin-left: 0; padding-right: 0;">Inhabitants of Shadow</h1>
+  </div>
+
+  <div class="separator-line"></div>
+
+  <div class="characters-container">
+    
+    <div class="characters-sidebar">
+      <button class="char-nav-link active" data-char="boy">The Boy</button>
+      <button class="char-nav-link" data-char="sister">The Sister</button>
+      <button class="char-nav-link" data-char="spider">The Spider</button>
+      <button class="char-nav-link" data-char="children">The Lost Children</button>
+    </div>
+
+    <div class="character-display-card">
+      <div class="char-img-wrap">
+        <img src="./img/char_boy.jpg" alt="The Boy" id="char-main-img" class="char-fade-image">
+      </div>
+      <div class="char-info-wrap">
+        <h2 id="char-title">The Boy</h2>
+        <p class="char-role" id="char-role">Protagonist</p>
+        <div class="small-separator"></div>
+        <p id="char-desc" class="char-description">
+          A nameless young boy who wakes up in the middle of a gloomy, monochrome forest. Armed with nothing but his reflexes, determination, and fragile life, he steps forward into absolute danger to find his missing sister.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="height: 60px;"></div>
+</main>
+
+<script src="java.js"></script>
+</body>
+</html>

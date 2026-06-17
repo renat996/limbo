@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limbo — Trailer</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://gstatic.com; frame-src https://youtube-nocookie.com https://www.youtube.com https://youtube-nocookie.com https://youtube.com;">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;900&family=Roboto:wght@300;400&display=swap">
+    <link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+</head>
+<body>
+<div class="flashlight-overlay"></div>
+
+<header class="header">
+  <h1>Limbo</h1>
+  <nav>
+    <a class="menu-link" href="index.html">About</a>
+    <a class="menu-link" href="characters.html">Characters</a>
+    <a class="menu-link" href="gameplay.html">Gameplay</a>
+    <a class="menu-link active" href="trailer.html" style="color: #fff;">Trailer</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero" style="margin-bottom: 20px;">
+    <p class="game-info" style="margin-left: 0; text-align: center; width: 100%;">CINEMATIC TEASER · OFFICIAL VIDEO</p>
+    <h1 class="h1" style="text-align: center; margin-left: 0; padding-right: 0;">Official Trailer</h1>
+  </div>
+
+  <div class="separator-line"></div>
+
+  <div class="trailer-container">
+    
+    <div class="video-switcher">
+      <button class="video-switch-btn active" data-video="https://youtube-nocookie.com/embed/Y4HSyvGv4bA">Teaser Trailer</button>
+      <button class="video-switch-btn" data-video="https://youtube-nocookie.com/embed/9G0z_Z36tIE">Launch Trailer</button>
+    </div>
+
+    <div class="video-wrapper">
+      <iframe 
+        id="main-youtube-video"
+        src="https://youtube-nocookie.com/embed/Y4HSyvGv4bA" 
+        title="Limbo Trailer" 
+        frameborder="0" 
+        allow="fullscreen">
+      </iframe>
+    </div>
+
+    <div class="video-description-box">
+      <h3 id="video-title">Teaser Trailer (2010)</h3>
+      <p id="video-text">The initial atmospheric look into the monochromatic horror platformer. No words, no music — just the chilling ambience of the woods and mechanical sounds of traps.</p>
+    </div>
+  </div>
+
+  <div style="height: 60px;"></div>
+</main>
+
+<script src="java.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Limbo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+  <h1>Limbo</h1>
+  <nav>
+    <a class="menu-link" href="index.html">About</a>
+    <a class="menu-link active" href="characters.html">Characters</a>
+    <a class="menu-link" href="trailer.html">Trailer</a>
+    <a class="menu-link" href="gameplay.html">Gameplay</a>
+  </nav>
+</header>
+ <div class="hero" style="margin-bottom: 20px;">
+    <p class="game-info" style="margin-left: 0; text-align: center; width: 100%;">MECHANICS · PUZZLES · SURVIVAL</p>
+    <h1 class="h1" style="text-align: center; margin-left: 0; padding-right: 0;">Die and Retry</h1>
+    <p style="text-align: center; max-width: 600px; margin: 20px auto; color: #888;">
+      The gameplay of Limbo relies heavily on trial and error. The dark silhouette of the boy must navigate a hostile, monochromatic world where safety is an illusion.
+    </p>
+  </div>
+
+  <div class="separator-line"></div>
+
+  <div class="gameplay-container">
+    <p class="about-title" style="text-align: center;">Core Gameplay Elements</p>
+    <div class="gameplay-grid">
+      
+      <div class="mechanic-card">
+        <h3>Trial and Death</h3>
+        <p>The game is designed around inevitable failure. Every hidden pit, spike, or falling trap teaches you a deadly lesson. You will die often, but return instantly to try a new strategy.</p>
+      </div>
+
+      <div class="mechanic-card">
+        <h3>Environmental Hazards</h3>
+        <p>From giant silhouette spiders and sharp mechanical saws to brain-controlling glowing parasites that force you to walk in one direction — the entire world is built to stop you.</p>
+      </div>
+
+      <div class="mechanic-card">
+        <h3>Physics Puzzles</h3>
+        <p>Progress requires manipulating the environment. Dragging wooden crates, swinging on dangling ropes, timing jumps over rising tides, and shifting gravitational fields are key to survival.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="separator-line"></div>
+
+  <div class="controls-block">
+    <p class="about-title">Game Controls</p>
+    <div class="keys-wrapper">
+      
+      <div class="key-item">
+        <div class="key-group">
+          <span class="key">←</span>
+          <span class="key">→</span>
+        </div>
+        <p>Move Left / Right</p>
+      </div>
+
+      <div class="key-item">
+        <span class="key">↑</span>
+        <p>Jump / Climb up</p>
+      </div>
+
+      <div class="key-item">
+        <span class="key">Ctrl</span>
+        <p>Action (Pull / Push / Interact)</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="height: 100px;"></div> 
+</main>
+<div class="separator-line"></div>
+
+<div class="trap-simulator-section">
+  <p class="about-title">Trap Simulator</p>
+  <p class="simulator-desc">The world of Limbo reacts to your every decision. Choose a mechanism to trigger and see if the boy can survive.</p>
+  
+  <div class="simulator-controls-panel">
+    <button class="trap-btn" data-trap="spider">Trigger Spider Attack</button>
+    <button class="trap-btn" data-trap="saw">Activate Buzz Saw</button>
+    <button class="trap-btn" data-trap="parasite">Drop Brain Parasite</button>
+  </div>
+
+  <div class="simulator-display">
+    <div class="display-status">SYSTEM STATUS: <span id="status-tag" class="status-idle">AWAITING INPUT</span></div>
+    <p id="log-text" class="log-message">Select a trap mechanism above to initiate trial...</p>
+    <div class="death-counter-mini">Boy's Deaths: <span id="sim-death-count">0</span></div>
+  </div>
+</div>
+
+
+<script src="java.js"></script>
+</body>
+</html>
