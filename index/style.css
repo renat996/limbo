@@ -859,3 +859,227 @@ html {
   margin-top: 5px;
   font-family: monospace;
 }
+/* ===== MOBILE ADAPTATION ===== */
+
+@media (max-width: 768px) {
+
+  /* Header */
+  .header {
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    margin-left: 0;
+  }
+
+  .header nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .menu-link {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 26px;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  h1.h1 {
+    font-size: 20px;
+    text-align: center;
+    padding-right: 0;
+    margin: 15px 10px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+
+  p.game-info {
+    margin-left: 0;
+    padding-right: 0;
+    text-align: center;
+  }
+
+  p.content-text {
+    font-size: 20px;
+  }
+
+  .hero {
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+
+  .hero-text p {
+    font-size: 16px;
+    padding: 0 10px;
+  }
+
+  #trailer {
+    margin-left: 0;
+    font-size: 15px;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .content-img {
+    flex-direction: column;
+    margin: 20px auto;
+  }
+
+  .text {
+    border-right: none;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    padding: 20px 15px;
+  }
+
+  .text p {
+    max-width: 100%;
+  }
+
+  .media-side {
+    padding: 20px 15px;
+  }
+
+  .slider-section {
+    padding: 20px 15px;
+  }
+
+  .slider-block {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .slide-title {
+    font-size: 20px;
+  }
+
+  .slider-controls {
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .gallery-section {
+    padding: 0 15px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .specs-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .gameplay-container {
+    padding: 20px 15px;
+  }
+
+  .gameplay-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .mechanic-card {
+    padding: 20px 15px;
+  }
+
+  /* Controls / Keys */
+  .keys-wrapper {
+    gap: 30px;
+  }
+
+  .key {
+    padding: 8px 14px;
+    font-size: 16px;
+  }
+
+  .trap-simulator-section {
+    padding: 0 15px;
+  }
+
+  .simulator-controls-panel {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .trap-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .simulator-display {
+    padding: 20px 15px;
+  }
+
+  .characters-container {
+    flex-direction: column;
+    padding: 0 15px;
+    gap: 20px;
+  }
+
+  .characters-sidebar {
+    flex: none;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 5px;
+  }
+
+  .char-nav-link {
+    font-size: 13px;
+    white-space: nowrap;
+    padding: 8px 10px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .char-nav-link:hover,
+  .char-nav-link.active {
+    border-left-color: transparent;
+    border-bottom-color: #fff;
+  }
+
+  .character-display-card {
+    flex-direction: column;
+    padding: 15px;
+    gap: 20px;
+  }
+
+  .char-img-wrap {
+    max-width: 100%;
+  }
+
+  .char-info-wrap h2 {
+    font-size: 22px;
+  }
+
+  .reg-modal-content {
+    margin: 10% auto;
+    padding: 25px 20px;
+    width: 90%;
+  }
+
+  .final {
+    padding: 40px 15px;
+    font-size: 14px;
+  }
+}
