@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Limbo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limbo — Gameplay</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://api.anthropic.com; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com;">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
 </head>
 <body>
+<div class="flashlight-overlay"></div>
+
 <header class="header">
   <h1>Limbo</h1>
   <nav>
     <a class="menu-link" href="index.html">About</a>
-    <a class="menu-link active" href="characters.html">Characters</a>
-    <a class="menu-link" href="trailer.html">Trailer</a>
-    <a class="menu-link" href="gameplay.html">Gameplay</a>
+    <a class="menu-link" href="characters.html">Characters</a>
+    <a class="menu-link active" href="gameplay.html" style="color: #fff;">Gameplay</a>
   </nav>
 </header>
- <div class="hero" style="margin-bottom: 20px;">
+
+<main>
+  <div class="hero" style="margin-bottom: 20px;">
     <p class="game-info" style="margin-left: 0; text-align: center; width: 100%;">MECHANICS · PUZZLES · SURVIVAL</p>
     <h1 class="h1" style="text-align: center; margin-left: 0; padding-right: 0;">Die and Retry</h1>
     <p style="text-align: center; max-width: 600px; margin: 20px auto; color: #888;">
@@ -75,27 +81,61 @@
     </div>
   </div>
 
-  <div style="height: 100px;"></div> 
+  <div class="separator-line"></div>
+
+  <div class="trap-simulator-section">
+    <p class="about-title">Trap Simulator</p>
+    <p class="simulator-desc">The world of Limbo reacts to your every decision. Choose a mechanism to trigger and see if the boy can survive.</p>
+    
+    <div class="simulator-controls-panel">
+      <button class="trap-btn" data-trap="spider">Trigger Spider Attack</button>
+      <button class="trap-btn" data-trap="saw">Activate Buzz Saw</button>
+      <button class="trap-btn" data-trap="parasite">Drop Brain Parasite</button>
+    </div>
+
+    <div class="simulator-display">
+      <div class="display-status">SYSTEM STATUS: <span id="status-tag" class="status-idle">AWAITING INPUT</span></div>
+      <p id="log-text" class="log-message">Select a trap mechanism above to initiate trial...</p>
+      <div class="death-counter-mini">Boy's Deaths: <span id="sim-death-count">0</span></div>
+    </div>
+  </div>
+
+  <!-- ===== REFLEX TRIAL ===== -->
+  <div class="separator-line"></div>
+
+  <div class="reflex-trial-section">
+    <p class="about-title" style="text-align:center;">Reflex Trial</p>
+    <p class="reflex-trial-sub">In Limbo, hesitation is death. When the light flashes — click instantly. The boy's survival depends on your reaction.</p>
+    <div class="reflex-arena" id="reflexArena">
+      <div class="reflex-boy" id="reflexBoy">
+        <div class="reflex-boy-silhouette"></div>
+        <div class="reflex-danger-bar-wrap">
+          <div class="reflex-danger-bar" id="reflexDangerBar"></div>
+        </div>
+      </div>
+      <div class="reflex-saw" id="reflexSaw">✕</div>
+      <div class="reflex-flash-btn" id="reflexFlashBtn" style="display:none;">JUMP</div>
+      <div class="reflex-idle-msg" id="reflexIdleMsg">Press START to begin the trial</div>
+    </div>
+    <div class="reflex-scoreboard">
+      <div class="reflex-score-cell">
+        <span class="reflex-score-num" id="reflexSurvived">0</span>
+        <span class="reflex-score-label">Survived</span>
+      </div>
+      <div class="reflex-score-cell">
+        <span class="reflex-score-num" id="reflexDied">0</span>
+        <span class="reflex-score-label">Deaths</span>
+      </div>
+      <div class="reflex-score-cell">
+        <span class="reflex-score-num" id="reflexBest">—</span>
+        <span class="reflex-score-label">Best (ms)</span>
+      </div>
+    </div>
+    <button class="reflex-start-btn" id="reflexStartBtn">Start Trial</button>
+  </div>
+
+  <div style="height: 100px;"></div>
 </main>
-<div class="separator-line"></div>
-
-<div class="trap-simulator-section">
-  <p class="about-title">Trap Simulator</p>
-  <p class="simulator-desc">The world of Limbo reacts to your every decision. Choose a mechanism to trigger and see if the boy can survive.</p>
-  
-  <div class="simulator-controls-panel">
-    <button class="trap-btn" data-trap="spider">Trigger Spider Attack</button>
-    <button class="trap-btn" data-trap="saw">Activate Buzz Saw</button>
-    <button class="trap-btn" data-trap="parasite">Drop Brain Parasite</button>
-  </div>
-
-  <div class="simulator-display">
-    <div class="display-status">SYSTEM STATUS: <span id="status-tag" class="status-idle">AWAITING INPUT</span></div>
-    <p id="log-text" class="log-message">Select a trap mechanism above to initiate trial...</p>
-    <div class="death-counter-mini">Boy's Deaths: <span id="sim-death-count">0</span></div>
-  </div>
-</div>
-
 
 <script src="java.js"></script>
 </body>

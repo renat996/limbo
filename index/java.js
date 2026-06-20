@@ -274,4 +274,546 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-}); 
+
+    // ===== AI VOICE OF LIMBO =====
+    const aiInput   = document.getElementById('aiInput');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+    const aiMessages = document.getElementById('aiMessages');
+
+    function addMsg(text, type) {
+        const div = document.createElement('div');
+        div.className = `ai-msg ai-msg--${type}`;
+        const dot = document.createElement('span');
+        dot.className = 'ai-msg-dot';
+        const span = document.createElement('span');
+        span.textContent = text;
+        div.appendChild(dot);
+        div.appendChild(span);
+        if (aiMessages) {
+            aiMessages.appendChild(div);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+        return div;
+    }
+
+    async function askLimbo() {
+        if (!aiInput || !aiMessages) return;
+        const question = aiInput.value.trim();
+        if (!question) return;
+        aiInput.value = '';
+        addMsg(question, 'user');
+
+        const typing = addMsg('...', 'typing');
+
+        try {
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 1000,
+                    system: `You are the Voice of Limbo — the dark, omniscient narrator of the game LIMBO by Playdead (2010). You speak in short, atmospheric, poetic sentences. You are mysterious, melancholic, never cheerful. You know everything about Limbo: the Boy, the Sister, the Spider, the Factory, the City, the physics puzzles, the parasite worms, the lost children who hunt. Answer questions about the game's world, lore, mechanics, characters, and atmosphere. Keep answers under 80 words. Speak as if the darkness itself is answering. Never break character. Never say you are an AI.`,
+                    messages: [{ role: 'user', content: question }]
+                })
+            });
+            const data = await res.json();
+            typing.remove();
+            const answer = data?.content?.[0]?.text || 'The void offers no answer.';
+            addMsg(answer, 'reply');
+        } catch (err) {
+            typing.remove();
+            addMsg('The darkness swallowed your question. Try again.', 'error');
+        }
+    }
+
+    if (aiSendBtn) aiSendBtn.addEventListener('click', askLimbo);
+    if (aiInput) aiInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLimbo(); });
+
+    // ===== HEARTBEAT (index.html) =====
+    const hbCanvas = document.getElementById('heartbeatCanvas');
+    const hbBpm = document.getElementById('hbBpm');
+    const hbStatus = document.getElementById('hbStatus');
+
+    if (hbCanvas) {
+        const ctx = hbCanvas.getContext('2d');
+        let points = [];
+        let offset = 0;
+        let bpm = 72;
+        let alive = true;
+        let flatTimer = null;
+        let beatPhase = 0;
+
+        function getBeat(x) {
+            const cycle = (x % 120);
+            if (cycle < 55) return 0;
+            if (cycle < 60) return -((cycle - 55) / 5) * 18;
+            if (cycle < 63) return ((cycle - 60) / 3) * 55;
+            if (cycle < 66) return 55 - ((cycle - 63) / 3) * 75;
+            if (cycle < 70) return -20 + ((cycle - 66) / 4) * 30;
+            if (cycle < 75) return 10 - ((cycle - 70) / 5) * 10;
+            return 0;
+        }
+
+        function drawHeartbeat() {
+            if (!hbCanvas) return;
+            const W = hbCanvas.width, H = hbCanvas.height;
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, W, H);
+
+            // grid lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < H; y += 20) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+            }
+
+            if (!alive) {
+                // flatline
+                ctx.strokeStyle = '#a66';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, H / 2);
+                ctx.lineTo(W, H / 2);
+                ctx.stroke();
+                return;
+            }
+
+            ctx.strokeStyle = '#5a5';
+            ctx.lineWidth = 1.5;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = '#3a3';
+            ctx.beginPath();
+            for (let x = 0; x < W; x++) {
+                const beatY = getBeat(x + offset);
+                const y = H / 2 - beatY;
+                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // moving dot
+            const dotX = W - 40;
+            const dotY = H / 2 - getBeat(dotX + offset);
+            ctx.fillStyle = '#7c7';
+            ctx.beginPath();
+            ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            offset += 1.2;
+            requestAnimationFrame(drawHeartbeat);
+        }
+
+        // Scroll detection — page gets darker and heart slows → flatlines
+        window.addEventListener('scroll', () => {
+            const scrollPct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            if (!alive) return;
+            if (scrollPct > 0.75) {
+                bpm = Math.max(20, Math.round(72 - scrollPct * 70));
+                if (hbBpm) hbBpm.textContent = bpm + ' BPM';
+                if (scrollPct > 0.92 && alive) {
+                    alive = false;
+                    if (hbStatus) { hbStatus.textContent = 'FLATLINE'; hbStatus.style.color = '#a66'; }
+                    if (hbBpm) { hbBpm.textContent = '0 BPM'; hbBpm.style.color = '#a66'; }
+                }
+            } else {
+                bpm = 72;
+                if (hbBpm) { hbBpm.textContent = '72 BPM'; hbBpm.style.color = ''; }
+                if (hbStatus) { hbStatus.textContent = 'ALIVE'; hbStatus.style.color = ''; }
+                alive = true;
+            }
+        });
+
+        drawHeartbeat();
+    }
+
+    // ===== SHADOW SCANNER (characters.html) =====
+    const scannerArena = document.getElementById('scannerArena');
+    const scannerBeam = document.getElementById('scannerBeam');
+    const scannerEntity = document.getElementById('scannerEntity');
+    const scannerLog = document.getElementById('scannerLog');
+    const scannerReading = document.getElementById('scannerReading');
+
+    if (scannerArena) {
+        const scannerZones = scannerArena.querySelectorAll('.scanner-zone');
+        let scanLog = [];
+        let currentEntity = null;
+        let scanTimeout = null;
+
+        const rarityColors = { rare: '#a66', uncommon: '#aa6', common: '#5a5', empty: '#333' };
+        const rarityLabels = { rare: '⚠ RARE', uncommon: '◈ DETECTED', common: '· FOUND', empty: '— EMPTY' };
+
+        scannerArena.addEventListener('mousemove', (e) => {
+            const rect = scannerArena.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (scannerBeam) {
+                scannerBeam.style.left = mx + 'px';
+                scannerBeam.style.top = my + 'px';
+                scannerBeam.style.opacity = '1';
+            }
+
+            let hit = null;
+            scannerZones.forEach(zone => {
+                const zRect = zone.getBoundingClientRect();
+                const aRect = scannerArena.getBoundingClientRect();
+                const zx = zRect.left - aRect.left, zy = zRect.top - aRect.top;
+                if (mx >= zx && mx <= zx + zRect.width && my >= zy && my <= zy + zRect.height) {
+                    hit = zone;
+                }
+            });
+
+            if (hit) {
+                const entity = hit.getAttribute('data-entity');
+                const rarity = hit.getAttribute('data-rarity');
+                const color = rarityColors[rarity] || '#555';
+                const label = rarityLabels[rarity] || '·';
+
+                if (entity !== currentEntity) {
+                    currentEntity = entity;
+                    if (scannerEntity) {
+                        scannerEntity.textContent = entity;
+                        scannerEntity.style.color = color;
+                    }
+                    if (scannerReading) scannerReading.querySelector('.scanner-reading-label').textContent = label;
+
+                    clearTimeout(scanTimeout);
+                    if (rarity !== 'empty') {
+                        scanTimeout = setTimeout(() => {
+                            const time = new Date().toLocaleTimeString('en', { hour12: false });
+                            const entry = `[${time}] ${label} — ${entity}`;
+                            scanLog.unshift(entry);
+                            if (scanLog.length > 5) scanLog.pop();
+                            if (scannerLog) {
+                                scannerLog.innerHTML = scanLog.map((l, i) =>
+                                    `<span class="scanner-log-line" style="opacity:${1 - i * 0.18};color:${i === 0 ? color : '#333'}">${l}</span>`
+                                ).join('');
+                            }
+                        }, 600);
+                    }
+                }
+            } else {
+                currentEntity = null;
+                if (scannerEntity) { scannerEntity.textContent = 'Move cursor into the dark'; scannerEntity.style.color = ''; }
+                if (scannerReading) scannerReading.querySelector('.scanner-reading-label').textContent = 'SCANNING...';
+            }
+        });
+
+        scannerArena.addEventListener('mouseleave', () => {
+            if (scannerBeam) scannerBeam.style.opacity = '0';
+            currentEntity = null;
+        });
+    }
+
+    // ===== REFLEX TRIAL (gameplay.html) =====
+    const reflexStartBtn = document.getElementById('reflexStartBtn');
+    const reflexFlashBtn = document.getElementById('reflexFlashBtn');
+    const reflexIdleMsg = document.getElementById('reflexIdleMsg');
+    const reflexSaw = document.getElementById('reflexSaw');
+    const reflexDangerBar = document.getElementById('reflexDangerBar');
+    const reflexSurvived = document.getElementById('reflexSurvived');
+    const reflexDied = document.getElementById('reflexDied');
+    const reflexBest = document.getElementById('reflexBest');
+    const reflexBoy = document.getElementById('reflexBoy');
+
+    if (reflexStartBtn) {
+        let survived = 0, died = 0, best = Infinity;
+        let trialActive = false;
+        let flashTimeout = null, dangerInterval = null;
+        let flashedAt = null;
+        let dangerPct = 0;
+
+        function resetTrial() {
+            trialActive = false;
+            clearTimeout(flashTimeout);
+            clearInterval(dangerInterval);
+            if (reflexFlashBtn) reflexFlashBtn.style.display = 'none';
+            if (reflexSaw) { reflexSaw.style.left = '-60px'; reflexSaw.style.color = '#a44'; }
+            if (reflexBoy) reflexBoy.style.opacity = '1';
+            if (reflexDangerBar) { reflexDangerBar.style.width = '0%'; reflexDangerBar.style.background = '#5a5'; }
+            dangerPct = 0;
+        }
+
+        function playerDied() {
+            died++;
+            if (reflexDied) reflexDied.textContent = died;
+            if (reflexBoy) reflexBoy.style.opacity = '0.15';
+            if (reflexSaw) reflexSaw.style.left = '55%';
+            if (reflexIdleMsg) { reflexIdleMsg.textContent = 'The boy is dead. Try again.'; reflexIdleMsg.style.display = 'block'; reflexIdleMsg.style.color = '#a66'; }
+            if (reflexStartBtn) reflexStartBtn.textContent = 'Retry';
+            resetTrial();
+        }
+
+        function playerSurvived() {
+            const ms = Date.now() - flashedAt;
+            survived++;
+            if (ms < best) { best = ms; if (reflexBest) reflexBest.textContent = ms + 'ms'; }
+            if (reflexSurvived) reflexSurvived.textContent = survived;
+            if (reflexIdleMsg) { reflexIdleMsg.textContent = `Survived! Reaction: ${ms}ms`; reflexIdleMsg.style.display = 'block'; reflexIdleMsg.style.color = '#5a5'; }
+            if (reflexStartBtn) reflexStartBtn.textContent = 'Next Round';
+            if (reflexFlashBtn) reflexFlashBtn.style.display = 'none';
+            resetTrial();
+        }
+
+        function startRound() {
+            if (trialActive) return;
+            trialActive = true;
+            if (reflexIdleMsg) reflexIdleMsg.style.display = 'none';
+            if (reflexBoy) reflexBoy.style.opacity = '1';
+            if (reflexSaw) { reflexSaw.style.left = '-60px'; reflexSaw.style.transition = 'none'; }
+            dangerPct = 0;
+            if (reflexDangerBar) { reflexDangerBar.style.width = '0%'; reflexDangerBar.style.background = '#5a5'; }
+
+            // Saw starts moving after random 1-3s
+            const delay = 1000 + Math.random() * 2000;
+            flashTimeout = setTimeout(() => {
+                if (!trialActive) return;
+                flashedAt = Date.now();
+                if (reflexFlashBtn) reflexFlashBtn.style.display = 'flex';
+                // Saw moves across — player has ~900ms
+                if (reflexSaw) { reflexSaw.style.transition = 'left 0.9s linear'; reflexSaw.style.left = '110%'; }
+
+                dangerInterval = setInterval(() => {
+                    dangerPct += 8;
+                    if (reflexDangerBar) {
+                        reflexDangerBar.style.width = Math.min(dangerPct, 100) + '%';
+                        reflexDangerBar.style.background = dangerPct > 60 ? '#a44' : dangerPct > 30 ? '#a84' : '#5a5';
+                    }
+                    if (dangerPct >= 100 && trialActive) {
+                        clearInterval(dangerInterval);
+                        playerDied();
+                    }
+                }, 70);
+            }, delay);
+        }
+
+        reflexStartBtn.addEventListener('click', () => {
+            resetTrial();
+            setTimeout(startRound, 100);
+            reflexStartBtn.textContent = 'Running...';
+            reflexStartBtn.disabled = true;
+            setTimeout(() => { reflexStartBtn.disabled = false; }, 500);
+        });
+
+        if (reflexFlashBtn) {
+            reflexFlashBtn.addEventListener('click', () => {
+                if (!trialActive || !flashedAt) return;
+                playerSurvived();
+            });
+        }
+    }
+
+});
+    const deathPullBtn = document.getElementById('deathPullBtn');
+    const deathPullLabel = document.getElementById('deathPullLabel');
+    const deathRecordIdle = document.getElementById('deathRecordIdle');
+    const deathRecordEntry = document.getElementById('deathRecordEntry');
+    const deathRecordId = document.getElementById('deathRecordId');
+    const deathRecordText = document.getElementById('deathRecordText');
+    const archiveDeathsTotal = document.getElementById('archiveDeathsTotal');
+    const archiveDeathsKind = document.getElementById('archiveDeathsKind');
+    const archiveDeathsZone = document.getElementById('archiveDeathsZone');
+    let archivePullCount = 0;
+
+    const deathZones = ['The Wood', 'The Swamp', 'The Factory', 'The City', 'The Ruins', 'The Tunnels'];
+    const deathCauses = ['Severed', 'Crushed', 'Drowned', 'Impaled', 'Parasited', 'Sawed', 'Fallen'];
+
+    async function pullDeathRecord() {
+        if (!deathPullBtn) return;
+        deathPullLabel.textContent = 'Retrieving...';
+        deathPullBtn.disabled = true;
+
+        const zone = deathZones[Math.floor(Math.random() * deathZones.length)];
+        const cause = deathCauses[Math.floor(Math.random() * deathCauses.length)];
+        archivePullCount++;
+
+        try {
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 1000,
+                    system: `You are a cold, bureaucratic death recorder in the world of LIMBO (2010 game by Playdead). You write clinical death log entries for the boy's deaths. Each entry must have exactly this JSON structure and nothing else:
+{"id":"LIMBO-DEATH-XXXX","zone":"zone name","cause":"one word cause","entry":"2-3 sentence atmospheric death description in past tense, clinical and eerie"}
+Only return valid JSON. No markdown, no extra text.`,
+                    messages: [{ role: 'user', content: `Generate death record. Zone: ${zone}. Cause category: ${cause}.` }]
+                })
+            });
+            const data = await res.json();
+            const raw = data?.content?.[0]?.text || '{}';
+            const clean = raw.replace(/```json|```/g, '').trim();
+            const parsed = JSON.parse(clean);
+
+            if (deathRecordIdle) deathRecordIdle.style.display = 'none';
+            if (deathRecordId) deathRecordId.textContent = parsed.id || `LIMBO-DEATH-${String(archivePullCount).padStart(4,'0')}`;
+            if (deathRecordText) deathRecordText.textContent = parsed.entry || 'Record corrupted.';
+            if (deathRecordEntry) deathRecordEntry.style.display = 'block';
+            if (archiveDeathsTotal) archiveDeathsTotal.textContent = archivePullCount;
+            if (archiveDeathsKind) archiveDeathsKind.textContent = parsed.cause || cause;
+            if (archiveDeathsZone) archiveDeathsZone.textContent = parsed.zone || zone;
+            deathPullLabel.textContent = 'Pull Another Record';
+        } catch (e) {
+            if (deathRecordIdle) deathRecordIdle.style.display = 'none';
+            if (deathRecordText) deathRecordText.textContent = 'Record corrupted. The archive is silent.';
+            if (deathRecordEntry) deathRecordEntry.style.display = 'block';
+            if (deathRecordId) deathRecordId.textContent = `LIMBO-DEATH-ERR`;
+            deathPullLabel.textContent = 'Retry';
+        }
+        deathPullBtn.disabled = false;
+    }
+
+    if (deathPullBtn) deathPullBtn.addEventListener('click', pullDeathRecord);
+
+    // ===== CHARACTER DIALOGUE (characters.html) =====
+    const charDialogueSend = document.getElementById('charDialogueSend');
+    const charDialogueInput = document.getElementById('charDialogueInput');
+    const charDialogueMessages = document.getElementById('charDialogueMessages');
+    const charVoiceBtns = document.querySelectorAll('.char-voice-btn');
+
+    let activeCharVoice = 'The Boy — a nameless child lost in Limbo, searching for his sister, silent but desperate';
+    let activeCharName = 'The Boy';
+
+    if (charVoiceBtns.length > 0) {
+        charVoiceBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                charVoiceBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCharVoice = btn.getAttribute('data-char');
+                activeCharName = btn.getAttribute('data-name');
+                if (charDialogueMessages) {
+                    charDialogueMessages.innerHTML = `<div class="char-dlg-msg char-dlg-system"><span class="char-dlg-dot"></span><span>${activeCharName} stirs in the darkness...</span></div>`;
+                }
+            });
+        });
+    }
+
+    function addDlgMsg(text, type, name) {
+        if (!charDialogueMessages) return;
+        const div = document.createElement('div');
+        div.className = `char-dlg-msg char-dlg-${type}`;
+        if (type === 'char') {
+            div.innerHTML = `<span class="char-dlg-name">${name}</span><span class="char-dlg-text">${text}</span>`;
+        } else {
+            div.innerHTML = `<span class="char-dlg-dot"></span><span>${text}</span>`;
+        }
+        charDialogueMessages.appendChild(div);
+        charDialogueMessages.scrollTop = charDialogueMessages.scrollHeight;
+    }
+
+    async function sendCharDialogue() {
+        if (!charDialogueInput || !charDialogueMessages) return;
+        const q = charDialogueInput.value.trim();
+        if (!q) return;
+        charDialogueInput.value = '';
+        addDlgMsg(q, 'user', 'You');
+        const typing = document.createElement('div');
+        typing.className = 'char-dlg-msg char-dlg-typing';
+        typing.innerHTML = `<span class="char-dlg-dot"></span><span>...</span>`;
+        charDialogueMessages.appendChild(typing);
+        charDialogueMessages.scrollTop = charDialogueMessages.scrollHeight;
+        if (charDialogueSend) charDialogueSend.disabled = true;
+
+        try {
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 1000,
+                    system: `You are roleplaying as: ${activeCharVoice}. You are in the world of LIMBO by Playdead (2010). Speak in character — brief, emotional, in-world. The boy speaks in broken, frightened fragments. The sister speaks like an echo or memory. The spider speaks in cold, ancient riddles. The lost child speaks in savage, territorial growls. Never break character. Never say you are an AI. Max 40 words.`,
+                    messages: [{ role: 'user', content: q }]
+                })
+            });
+            const data = await res.json();
+            typing.remove();
+            const answer = data?.content?.[0]?.text || '...';
+            addDlgMsg(answer, 'char', activeCharName);
+        } catch (e) {
+            typing.remove();
+            addDlgMsg('Only silence answers.', 'system', '');
+        }
+        if (charDialogueSend) charDialogueSend.disabled = false;
+    }
+
+    if (charDialogueSend) charDialogueSend.addEventListener('click', sendCharDialogue);
+    if (charDialogueInput) charDialogueInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCharDialogue(); });
+
+    // ===== PUZZLE FORGE (gameplay.html) =====
+    const puzzleForgeBtn = document.getElementById('puzzleForgeBtn');
+    const puzzleForgeBtnLabel = document.getElementById('puzzleForgeBtnLabel');
+    const puzzleIdle = document.getElementById('puzzleIdle');
+    const puzzleResult = document.getElementById('puzzleResult');
+    const puzzleResultZone = document.getElementById('puzzleResultZone');
+    const puzzleResultName = document.getElementById('puzzleResultName');
+    const puzzleResultDesc = document.getElementById('puzzleResultDesc');
+    const puzzleResultSolution = document.getElementById('puzzleResultSolution');
+    const puzzleZoneBtns = document.querySelectorAll('.puzzle-zone-btn');
+    const puzzleDiffBtns = document.querySelectorAll('.puzzle-diff-btn');
+
+    let selectedPuzzleZone = 'The Forest';
+    let selectedPuzzleDiff = 'a devious but solvable puzzle';
+
+    if (puzzleZoneBtns.length > 0) {
+        puzzleZoneBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                puzzleZoneBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedPuzzleZone = btn.getAttribute('data-zone');
+            });
+        });
+    }
+    if (puzzleDiffBtns.length > 0) {
+        puzzleDiffBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                puzzleDiffBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedPuzzleDiff = btn.getAttribute('data-diff');
+            });
+        });
+    }
+
+    async function forgePuzzle() {
+        if (!puzzleForgeBtn) return;
+        puzzleForgeBtnLabel.textContent = '⚙ Forging...';
+        puzzleForgeBtn.disabled = true;
+
+        try {
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 1000,
+                    system: `You design puzzle levels for LIMBO by Playdead (2010). The game uses physics, darkness, traps, and the environment. When given a zone and difficulty, respond ONLY with this exact JSON structure:
+{"name":"Puzzle name (3-5 words)","zone":"zone name","description":"2-3 sentences describing what the player sees and the obstacle they face","solution":"1-2 sentences hinting at the solution without giving it fully away"}
+Only return valid JSON. No markdown, no extra text.`,
+                    messages: [{ role: 'user', content: `Zone: ${selectedPuzzleZone}. Create ${selectedPuzzleDiff}.` }]
+                })
+            });
+            const data = await res.json();
+            const raw = data?.content?.[0]?.text || '{}';
+            const clean = raw.replace(/```json|```/g, '').trim();
+            const parsed = JSON.parse(clean);
+
+            if (puzzleIdle) puzzleIdle.style.display = 'none';
+            if (puzzleResultZone) puzzleResultZone.textContent = (parsed.zone || selectedPuzzleZone).toUpperCase();
+            if (puzzleResultName) puzzleResultName.textContent = parsed.name || 'Unnamed Trap';
+            if (puzzleResultDesc) puzzleResultDesc.textContent = parsed.description || '';
+            if (puzzleResultSolution) puzzleResultSolution.textContent = parsed.solution || '';
+            if (puzzleResult) puzzleResult.style.display = 'block';
+            puzzleForgeBtnLabel.textContent = '⚙ Forge Another';
+        } catch (e) {
+            if (puzzleIdle) puzzleIdle.style.display = 'none';
+            if (puzzleResultName) puzzleResultName.textContent = 'The forge failed.';
+            if (puzzleResultDesc) puzzleResultDesc.textContent = 'The darkness rejected the design. Try again.';
+            if (puzzleResultSolution) puzzleResultSolution.textContent = '';
+            if (puzzleResult) puzzleResult.style.display = 'block';
+            puzzleForgeBtnLabel.textContent = '⚙ Retry';
+        }
+        puzzleForgeBtn.disabled = false;
+    }
+
+    if (puzzleForgeBtn) puzzleForgeBtn.addEventListener('click', forgePuzzle);
+
